@@ -79,12 +79,8 @@ private:
     }
 
     SplayTreeNode *InsertHelper(SplayTreeNode *root, const Key &key, const Value &value) {
-        if (root == nullptr) {
-            return new SplayTreeNode(key, value);
-        }
-
+        if (root == nullptr) return new SplayTreeNode(key, value);
         root = Splay(root, key);
-
         if (key < root->key) {
             auto temp = new SplayTreeNode(key, value);
             temp->rChild = root;
@@ -98,21 +94,14 @@ private:
             root->rChild = nullptr;
             return temp;
         }
-
         return root;
     }
 
     SplayTreeNode *RemoveHelper(SplayTreeNode *root, const Key &key) {
-        if (!root)
-            return root;
-
+        if (!root) return root;
         root = Splay(root, key);
-
-        if (root->key != key)
-            return root;
-
+        if (root->key != key) return root;
         auto temp = root;
-
         if (!root->lChild) {
             root = root->rChild;
         } else if (!root->rChild) {
@@ -121,7 +110,6 @@ private:
             root = Splay(root->lChild, key);
             root->rChild = temp->rChild;
         }
-
         delete temp;
         return root;
     }
@@ -153,15 +141,9 @@ private:
     }
 
     SplayTreeNode *Splay(SplayTreeNode *root, const Key &key) {
-        if (root == nullptr || root->key == key) {
-            return root;
-        }
-
+        if (root == nullptr || root->key == key) return root;
         if (key < root->key) {
-            if (root->lChild == nullptr) {
-                return root;
-            }
-
+            if (root->lChild == nullptr) return root;
             if (key < root->lChild->key) {
                 root->lChild->lChild = Splay(root->lChild->lChild, key);
                 root = RotateRight(root);
@@ -171,13 +153,9 @@ private:
                     root->lChild = RotateLeft(root->lChild);
                 }
             }
-
             return (root->lChild == nullptr) ? root : RotateRight(root);
         } else {
-            if (root->rChild == nullptr) {
-                return root;
-            }
-
+            if (root->rChild == nullptr) return root;
             if (key < root->rChild->key) {
                 root->rChild->lChild = Splay(root->rChild->lChild, key);
                 if (root->rChild->lChild != nullptr) {
@@ -187,7 +165,6 @@ private:
                 root->rChild->rChild = Splay(root->rChild->rChild, key);
                 root = RotateLeft(root);
             }
-
             return (root->rChild == nullptr) ? root : RotateLeft(root);
         }
     }
