@@ -114,18 +114,18 @@ private:
         return root;
     }
 
-    SplayTreeNode *RotateRight(SplayTreeNode *x) {
-        auto y = x->lChild;
-        x->lChild = y->rChild;
-        y->rChild = x;
-        return y;
+    SplayTreeNode *RotateRight(SplayTreeNode *root) {
+        auto tmp = root->lChild;
+        root->lChild = tmp->rChild;
+        tmp->rChild = root;
+        return tmp;
     }
 
-    SplayTreeNode *RotateLeft(SplayTreeNode *x) {
-        auto y = x->rChild;
-        x->rChild = y->lChild;
-        y->lChild = x;
-        return y;
+    SplayTreeNode *RotateLeft(SplayTreeNode *root) {
+        auto tmp = root->rChild;
+        root->rChild = tmp->lChild;
+        tmp->lChild = root;
+        return tmp;
     }
 
     SplayTreeNode *Splay(SplayTreeNode *root, const Key &key) {
