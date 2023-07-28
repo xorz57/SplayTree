@@ -38,12 +38,14 @@ int main() {
     tree.Insert(14, "fourteen");
     tree.Insert(45, "forty-five");
 
-    auto result1 = tree.Search(1);
+    auto result1 = tree.Search(3);
     if (result1) {
         std::cout << result1->key << " -> " << result1->value << std::endl;
     } else {
         std::cout << "Key not found!" << std::endl;
     }
+
+    tree.Remove(3);
 
     auto result2 = tree.Search(3);
     if (result2) {

@@ -102,6 +102,30 @@ private:
         return root;
     }
 
+    SplayTreeNode *RemoveHelper(SplayTreeNode *root, const Key &key) {
+        if (!root)
+            return root;
+
+        root = Splay(root, key);
+
+        if (root->key != key)
+            return root;
+
+        auto tmp = root;
+
+        if (!root->lChild) {
+            root = root->rChild;
+        } else if (!root->rChild) {
+            root = root->lChild;
+        } else {
+            root = Splay(root->lChild, key);
+            root->rChild = tmp->rChild;
+        }
+
+        delete tmp;
+        return root;
+    }
+
     SplayTreeNode *MinimumHelper(SplayTreeNode *root) {
         if (!root) return nullptr;
         while (root->lChild) root = root->lChild;
@@ -208,8 +232,13 @@ public:
         mRoot = InsertHelper(mRoot, key, value);
     }
 
+    void Remove(const Key &key) {
+        mRoot = RemoveHelper(mRoot, key);
+    }
+
     SplayTreeNode *Search(const Key &key) {
-        return Splay(mRoot, key);
+        mRoot = Splay(mRoot, key);
+        return (mRoot->key == key) ? mRoot : nullptr;
     }
 
     SplayTreeNode *Minimum() {
