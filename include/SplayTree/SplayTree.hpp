@@ -86,17 +86,17 @@ private:
         root = Splay(root, key);
 
         if (key < root->key) {
-            auto tmp = new SplayTreeNode(key, value);
-            tmp->rChild = root;
-            tmp->lChild = root->lChild;
+            auto temp = new SplayTreeNode(key, value);
+            temp->rChild = root;
+            temp->lChild = root->lChild;
             root->lChild = nullptr;
-            return tmp;
+            return temp;
         } else if (key > root->key) {
-            auto tmp = new SplayTreeNode(key, value);
-            tmp->lChild = root;
-            tmp->rChild = root->rChild;
+            auto temp = new SplayTreeNode(key, value);
+            temp->lChild = root;
+            temp->rChild = root->rChild;
             root->rChild = nullptr;
-            return tmp;
+            return temp;
         }
 
         return root;
@@ -111,7 +111,7 @@ private:
         if (root->key != key)
             return root;
 
-        auto tmp = root;
+        auto temp = root;
 
         if (!root->lChild) {
             root = root->rChild;
@@ -119,10 +119,10 @@ private:
             root = root->lChild;
         } else {
             root = Splay(root->lChild, key);
-            root->rChild = tmp->rChild;
+            root->rChild = temp->rChild;
         }
 
-        delete tmp;
+        delete temp;
         return root;
     }
 
@@ -139,17 +139,17 @@ private:
     }
 
     SplayTreeNode *RotateRight(SplayTreeNode *root) {
-        auto tmp = root->lChild;
-        root->lChild = tmp->rChild;
-        tmp->rChild = root;
-        return tmp;
+        auto temp = root->lChild;
+        root->lChild = temp->rChild;
+        temp->rChild = root;
+        return temp;
     }
 
     SplayTreeNode *RotateLeft(SplayTreeNode *root) {
-        auto tmp = root->rChild;
-        root->rChild = tmp->lChild;
-        tmp->lChild = root;
-        return tmp;
+        auto temp = root->rChild;
+        root->rChild = temp->lChild;
+        temp->lChild = root;
+        return temp;
     }
 
     SplayTreeNode *Splay(SplayTreeNode *root, const Key &key) {
