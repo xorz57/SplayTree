@@ -22,7 +22,7 @@
 	SOFTWARE.
 */
 
-#include <SplayTree/SplayTree.hpp>
+#include "SplayTree/SplayTree.hpp"
 
 #include <iostream>
 #include <string>
