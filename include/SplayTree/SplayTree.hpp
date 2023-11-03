@@ -76,7 +76,7 @@ private:
     }
 
     std::shared_ptr<SplayTreeNode> InsertHelper(std::shared_ptr<SplayTreeNode> root, const Key &key, const Value &value) {
-        if (root == nullptr) return std::make_shared<SplayTreeNode>(key, value);
+        if (!root) return std::make_shared<SplayTreeNode>(key, value);
         root = Splay(root, key);
         if (key < root->key) {
             auto temp = std::make_shared<SplayTreeNode>(key, value);
@@ -138,31 +138,31 @@ private:
     }
 
     std::shared_ptr<SplayTreeNode> Splay(std::shared_ptr<SplayTreeNode> root, const Key &key) {
-        if (root == nullptr || root->key == key) return root;
+        if (!root || root->key == key) return root;
         if (key < root->key) {
-            if (root->lChild == nullptr) return root;
+            if (!root->lChild) return root;
             if (key < root->lChild->key) {
                 root->lChild->lChild = Splay(root->lChild->lChild, key);
                 root = RotateRight(root);
             } else if (key > root->lChild->key) {
                 root->lChild->rChild = Splay(root->lChild->rChild, key);
-                if (root->lChild->rChild != nullptr) {
+                if (root->lChild->rChild) {
                     root->lChild = RotateLeft(root->lChild);
                 }
             }
-            return (root->lChild == nullptr) ? root : RotateRight(root);
+            return (root->lChild) ? RotateRight(root) : root;
         } else {
-            if (root->rChild == nullptr) return root;
+            if (!root->rChild) return root;
             if (key < root->rChild->key) {
                 root->rChild->lChild = Splay(root->rChild->lChild, key);
-                if (root->rChild->lChild != nullptr) {
+                if (root->rChild->lChild) {
                     root->rChild = RotateRight(root->rChild);
                 }
             } else if (key > root->rChild->key) {
                 root->rChild->rChild = Splay(root->rChild->rChild, key);
                 root = RotateLeft(root);
             }
-            return (root->rChild == nullptr) ? root : RotateLeft(root);
+            return (root->rChild) ? RotateLeft(root) : root;
         }
     }
 
