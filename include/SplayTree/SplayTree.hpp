@@ -27,6 +27,7 @@
 #include <algorithm>
 #include <functional>
 #include <initializer_list>
+#include <memory>
 #include <queue>
 #include <utility>
 
@@ -37,58 +38,54 @@ public:
 
 private:
     struct SplayTreeNode {
-        SplayTreeNode() = default;
-
         SplayTreeNode(const Key &key, const Value &value) : key(key), value(value) {}
 
-        ~SplayTreeNode() = default;
-
-        SplayTreeNode *lChild = nullptr;
-        SplayTreeNode *rChild = nullptr;
+        std::shared_ptr<SplayTreeNode> lChild = nullptr;
+        std::shared_ptr<SplayTreeNode> rChild = nullptr;
 
         Key key;
         Value value;
     };
 
-    void PreOrderTraversalHelper(SplayTreeNode *root, Handler handler) {
+    void PreOrderTraversalHelper(std::shared_ptr<SplayTreeNode> root, Handler handler) {
         if (!root) return;
         handler(root->key, root->value);
         PreOrderTraversalHelper(root->lChild, handler);
         PreOrderTraversalHelper(root->rChild, handler);
     }
 
-    void InOrderTraversalHelper(SplayTreeNode *root, Handler handler) {
+    void InOrderTraversalHelper(std::shared_ptr<SplayTreeNode> root, Handler handler) {
         if (!root) return;
         InOrderTraversalHelper(root->lChild, handler);
         handler(root->key, root->value);
         InOrderTraversalHelper(root->rChild, handler);
     }
 
-    void PostOrderTraversalHelper(SplayTreeNode *root, Handler handler) {
+    void PostOrderTraversalHelper(std::shared_ptr<SplayTreeNode> root, Handler handler) {
         if (!root) return;
         PostOrderTraversalHelper(root->lChild, handler);
         PostOrderTraversalHelper(root->rChild, handler);
         handler(root->key, root->value);
     }
 
-    void ClearHelper(SplayTreeNode *root) {
+    void ClearHelper(std::shared_ptr<SplayTreeNode> root) {
         if (!root) return;
         if (root->lChild) ClearHelper(root->lChild);
         if (root->rChild) ClearHelper(root->rChild);
-        delete root;
+        root.reset();
     }
 
-    SplayTreeNode *InsertHelper(SplayTreeNode *root, const Key &key, const Value &value) {
-        if (root == nullptr) return new SplayTreeNode(key, value);
+    std::shared_ptr<SplayTreeNode> InsertHelper(std::shared_ptr<SplayTreeNode> root, const Key &key, const Value &value) {
+        if (root == nullptr) return std::make_shared<SplayTreeNode>(key, value);
         root = Splay(root, key);
         if (key < root->key) {
-            auto temp = new SplayTreeNode(key, value);
+            auto temp = std::make_shared<SplayTreeNode>(key, value);
             temp->rChild = root;
             temp->lChild = root->lChild;
             root->lChild = nullptr;
             return temp;
         } else if (key > root->key) {
-            auto temp = new SplayTreeNode(key, value);
+            auto temp = std::make_shared<SplayTreeNode>(key, value);
             temp->lChild = root;
             temp->rChild = root->rChild;
             root->rChild = nullptr;
@@ -97,7 +94,7 @@ private:
         return root;
     }
 
-    SplayTreeNode *RemoveHelper(SplayTreeNode *root, const Key &key) {
+    std::shared_ptr<SplayTreeNode> RemoveHelper(std::shared_ptr<SplayTreeNode> root, const Key &key) {
         if (!root) return root;
         root = Splay(root, key);
         if (root->key != key) return root;
@@ -110,37 +107,37 @@ private:
             root = Splay(root->lChild, key);
             root->rChild = temp->rChild;
         }
-        delete temp;
+        temp.reset();
         return root;
     }
 
-    SplayTreeNode *MinimumHelper(SplayTreeNode *root) {
+    std::shared_ptr<SplayTreeNode> MinimumHelper(std::shared_ptr<SplayTreeNode> root) {
         if (!root) return nullptr;
         while (root->lChild) root = root->lChild;
         return root;
     }
 
-    SplayTreeNode *MaximumHelper(SplayTreeNode *root) {
+    std::shared_ptr<SplayTreeNode> MaximumHelper(std::shared_ptr<SplayTreeNode> root) {
         if (!root) return nullptr;
         while (root->rChild) root = root->rChild;
         return root;
     }
 
-    SplayTreeNode *RotateRight(SplayTreeNode *root) {
+    std::shared_ptr<SplayTreeNode> RotateRight(std::shared_ptr<SplayTreeNode> root) {
         auto temp = root->lChild;
         root->lChild = temp->rChild;
         temp->rChild = root;
         return temp;
     }
 
-    SplayTreeNode *RotateLeft(SplayTreeNode *root) {
+    std::shared_ptr<SplayTreeNode> RotateLeft(std::shared_ptr<SplayTreeNode> root) {
         auto temp = root->rChild;
         root->rChild = temp->lChild;
         temp->lChild = root;
         return temp;
     }
 
-    SplayTreeNode *Splay(SplayTreeNode *root, const Key &key) {
+    std::shared_ptr<SplayTreeNode> Splay(std::shared_ptr<SplayTreeNode> root, const Key &key) {
         if (root == nullptr || root->key == key) return root;
         if (key < root->key) {
             if (root->lChild == nullptr) return root;
@@ -169,24 +166,20 @@ private:
         }
     }
 
-    int HeightHelper(const SplayTreeNode *root) {
+    int HeightHelper(const std::shared_ptr<SplayTreeNode> root) {
         if (!root) return 0;
         return std::max(HeightHelper(root->lChild), HeightHelper(root->rChild)) + 1;
     }
 
-    int SizeHelper(const SplayTreeNode *root) {
+    int SizeHelper(const std::shared_ptr<SplayTreeNode> root) {
         if (!root) return 0;
         return SizeHelper(root->lChild) + SizeHelper(root->rChild) + 1;
     }
 
-    SplayTreeNode *mRoot = nullptr;
+    std::shared_ptr<SplayTreeNode> mRoot = nullptr;
 
 public:
     SplayTree() = default;
-
-    ~SplayTree() {
-        Clear();
-    }
 
     void PreOrderTraversal(Handler handler) {
         PreOrderTraversalHelper(mRoot, handler);
@@ -213,16 +206,16 @@ public:
         mRoot = RemoveHelper(mRoot, key);
     }
 
-    SplayTreeNode *Search(const Key &key) {
+    std::shared_ptr<SplayTreeNode> Search(const Key &key) {
         mRoot = Splay(mRoot, key);
         return (mRoot->key == key) ? mRoot : nullptr;
     }
 
-    SplayTreeNode *Minimum() {
+    std::shared_ptr<SplayTreeNode> Minimum() {
         return MinimumHelper(mRoot);
     }
 
-    SplayTreeNode *Maximum() {
+    std::shared_ptr<SplayTreeNode> Maximum() {
         return MaximumHelper(mRoot);
     }
 
