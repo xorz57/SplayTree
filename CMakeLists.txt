@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.26)
 project(SplayTree)
 
 set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_library(SplayTree INTERFACE)
 target_include_directories(SplayTree INTERFACE ${CMAKE_SOURCE_DIR}/include)
