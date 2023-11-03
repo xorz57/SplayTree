@@ -68,13 +68,6 @@ private:
         handler(root->key, root->value);
     }
 
-    void ClearHelper(std::shared_ptr<SplayTreeNode> root) {
-        if (!root) return;
-        if (root->lChild) ClearHelper(root->lChild);
-        if (root->rChild) ClearHelper(root->rChild);
-        root.reset();
-    }
-
     std::shared_ptr<SplayTreeNode> InsertHelper(std::shared_ptr<SplayTreeNode> root, const Key &key, const Value &value) {
         if (!root) return std::make_shared<SplayTreeNode>(key, value);
         root = Splay(root, key);
@@ -95,7 +88,7 @@ private:
     }
 
     std::shared_ptr<SplayTreeNode> RemoveHelper(std::shared_ptr<SplayTreeNode> root, const Key &key) {
-        if (!root) return root;
+        if (!root) return nullptr;
         root = Splay(root, key);
         if (root->key != key) return root;
         auto temp = root;
@@ -138,7 +131,8 @@ private:
     }
 
     std::shared_ptr<SplayTreeNode> Splay(std::shared_ptr<SplayTreeNode> root, const Key &key) {
-        if (!root || root->key == key) return root;
+        if (!root) return nullptr;
+        if (root->key == key) return root;
         if (key < root->key) {
             if (!root->lChild) return root;
             if (key < root->lChild->key) {
@@ -176,7 +170,7 @@ private:
         return SizeHelper(root->lChild) + SizeHelper(root->rChild) + 1;
     }
 
-    std::shared_ptr<SplayTreeNode> mRoot = nullptr;
+    std::shared_ptr<SplayTreeNode> mRoot;
 
 public:
     SplayTree() = default;
@@ -194,8 +188,7 @@ public:
     }
 
     void Clear() {
-        ClearHelper(mRoot);
-        mRoot = nullptr;
+        mRoot.reset();
     }
 
     void Insert(const Key &key, const Value &value) {
