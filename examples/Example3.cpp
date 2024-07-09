@@ -28,24 +28,24 @@
 #include <string>
 
 int main() {
-    SplayTree<int, std::string> tree;
+    splay_tree_t<int, std::string> tree;
 
-    tree.Insert(2, "two");
-    tree.Insert(4, "four");
-    tree.Insert(90, "ninety");
-    tree.Insert(3, "three");
-    tree.Insert(0, "zero");
-    tree.Insert(14, "fourteen");
-    tree.Insert(45, "forty-five");
+    tree.insert(2, "two");
+    tree.insert(4, "four");
+    tree.insert(90, "ninety");
+    tree.insert(3, "three");
+    tree.insert(0, "zero");
+    tree.insert(14, "fourteen");
+    tree.insert(45, "forty-five");
 
-    auto min = tree.Minimum();
+    auto min = tree.minimum();
     if (min) {
         std::cout << "Min: " << min->key << std::endl;
     } else {
         std::cout << "The tree is empty!" << std::endl;
     }
 
-    auto max = tree.Maximum();
+    auto max = tree.maximum();
     if (max) {
         std::cout << "Max: " << max->key << std::endl;
     } else {
